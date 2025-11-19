@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Page</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section h3 {
+      margin-bottom: 8px;
+      color: #444;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .summary-box {
+      background: #f8f8f8;
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    .pay-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: #3399ff;
+      color: white;
+      font-size: 18px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .pay-btn:hover {
+      background: #1e7fe5;
+    }
+  </style>
+
+  <!-- Razorpay Script -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Checkout</h2>
+
+    <!-- Order Summary -->
+    <div class="section">
+      <h3>Order Summary</h3>
+      <div class="summary-box">
+        <p><strong>Product:</strong> Premium Subscription</p>
+        <p><strong>Amount:</strong> ₹499</p>
+      </div>
+    </div>
+
+    <!-- Customer Info -->
+    <div class="section">
+      <h3>Your Details</h3>
+      <input type="text" id="name" placeholder="Full Name" />
+      <input type="email" id="email" placeholder="Email Address" />
+      <input type="text" id="phone" placeholder="Phone Number" />
+    </div>
+
+    <!-- Payment Button -->
+    <button class="pay-btn" onclick="startPayment()">Pay Now</button>
+  </div>
+
+  <script>
+    async function startPayment() {
+      // 1. Customer Info Pickup
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+
+      if (!name || !email || !phone) {
+        alert("Please fill all details before proceeding.");
+        return;
+      }
+
+      // 2. Create order by calling backend API
+      const res = await fetch("/create-order", { method: "POST" });
+      const order = await res.json();
+
+      // 3. Razorpay options
+      const options = {
+        key: "RAZORPAY_KEY_ID_PUBLIC", // Replace with your public key
+        amount: order.amount,
+        currency: "INR",
+        name: "Premium Subscription",
+        description: "Order Payment",
+        order_id: order.id,
+        
+        handler: function (response) {
+          alert("Payment Successful!");
+          console.log(response);
+        },
+
+        prefill: {
+          name: name,
+          email: email,
+          contact: phone,
+        },
+
+        theme: {
+          color: "#3399ff",
+        },
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+    }
+  </script>
+</body>
+</html>
