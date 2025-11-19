@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block content %}
+<h1>Checkout</h1>
+{% if success %}
+<div class="alert alert-success">
+  Payment simulated — order placed! Total charged:
+  <strong>₹{{ "%.2f"|format(total) }}</strong>
+</div>
+<a href="{{ url_for('index') }}" class="btn btn-primary">Continue shopping</a>
+{% else %}
+<p>Order total: <strong>₹{{ "%.2f"|format(total) }}</strong></p>
+<form method="post">
+  <div class="mb-3">
+    <label>Name</label>
+    <input class="form-control" name="name" required />
+  </div>
+  <div class="mb-3">
+    <label>Address</label>
+    <textarea class="form-control" name="address" required></textarea>
+  </div>
+  <button type="submit" class="btn btn-success">Place order (dummy)</button>
+</form>
+{% endif %} {% endblock %}
