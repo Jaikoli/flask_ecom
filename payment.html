@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Fitness Tracker Store</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(45deg, #ff6b6b, #feca57); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .order-summary { padding: 25px; border-bottom: 1px solid #eee; }
+        .item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .item-name { font-weight: 600; color: #333; }
+        .item-price { font-weight: bold; color: #ff6b6b; font-size: 18px; }
+        .total { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-top: 2px solid #f0f0f0; }
+        .total-label { font-size: 20px; font-weight: 700; color: #333; }
+        .total-amount { font-size: 24px; font-weight: bold; color: #ff6b6b; }
+        .payment-form { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 600; }
+        .form-group input { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; transition: border-color 0.3s; }
+        .form-group input:focus { outline: none; border-color: #667eea; }
+        .payment-methods { display: flex; gap: 10px; margin-bottom: 20px; }
+        .payment-method { flex: 1; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .payment-method.active { border-color: #667eea; background: #f8f9ff; }
+        .payment-method i { font-size: 24px; color: #667eea; margin-bottom: 5px; display: block; }
+        .card-details { display: none; }
+        .card-details.active { display: block; animation: slideDown 0.3s; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .cvv-group { display: flex; gap: 10px; }
+        .cvv-group .form-group { flex: 1; }
+        .pay-button { width: 100%; padding: 18px; background: linear-gradient(45deg, #ff6b6b, #feca57); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
+        .pay-button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,107,107,0.3); }
+        .pay-button:active { transform: translateY(0); }
+        .secure-badge { text-align: center; padding: 15px; background: #f8f9ff; color: #667eea; font-size: 14px; }
+        .secure-badge i { margin-right: 8px; color: #00c851; }
+        @media (max-width: 480px) { .container { margin: 10px; } .header { padding: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-shopping-cart"></i> Checkout</h1>
+            <p>Fitness Tracker Pro - Complete Package</p>
+        </div>
+        
+        <div class="order-summary">
+            <div class="item">
+                <div>
+                    <div class="item-name">Fitness Tracker Pro + App</div>
+                    <div style="color: #888; font-size: 14px;">Premium model with heart rate monitor</div>
+                </div>
+                <div class="item-price">$129.99</div>
+            </div>
+            <div class="total">
+                <div class="total-label">Total Amount</div>
+                <div class="total-amount">$129.99</div>
+            </div>
+        </div>
+        
+        <form class="payment-form" id="paymentForm">
+            <div class="payment-methods">
+                <div class="payment-method active" data-method="card">
+                    <i class="fas fa-credit-card"></i>
+                    <div>Card</div>
+                </div>
+                <div class="payment-method" data-method="paypal">
+                    <i class="fab fa-paypal"></i>
+                    <div>PayPal</div>
+                </div>
+                <div class="payment-method" data-method="upi">
+                    <i class="fas fa-mobile-alt"></i>
+                    <div>UPI</div>
+                </div>
+            </div>
+            
+            <div class="card-details active" id="cardDetails">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Cardholder Name</label>
+                    <input type="text" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-credit-card"></i> Card Number</label>
+                    <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                </div>
+                <div class="cvv-group">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> Expiry</label>
+                        <input type="text" placeholder="MM/YY" maxlength="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> CVV</label>
+                        <input type="text" placeholder="123" maxlength="4" required>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="pay-button">
+                <i class="fas fa-lock"></i> Pay $129.99 Securely
+            </button>
+        </form>
+        
+        <div class="secure-badge">
+            <i class="fas fa-shield-alt"></i>
+            100% Secure Payment | SSL Encrypted | Trusted by 1M+ users
+        </div>
+    </div>
+
+    <script>
+        // Payment method switching
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+                method.classList.add('active');
+                
+                const methodType = method.dataset.method;
+                if (methodType === 'card') {
+                    document.getElementById('cardDetails').classList.add('active');
+                } else {
+                    document.getElementById('cardDetails').classList.remove('active');
+                }
+            });
+        });
+
+        // Card number formatting
+        const cardNumber = document.querySelector('input[placeholder*="1234 5678"]');
+        cardNumber.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let matches = value.match(/\d{4,16}/g);
+            let match = matches && matches[0] || '';
+            let parts = [];
+            for (let i = 0, len = match.length; i < len; i += 4) {
+                parts.push(match.substring(i, i + 4));
+            }
+            if (parts.length) {
+                e.target.value = parts.join(' ');
+            } else {
+                e.target.value = value;
+            }
+        });
+
+        // Form submission
+        document.getElementById('paymentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const payBtn = document.querySelector('.pay-button');
+            const originalText = payBtn.innerHTML;
+            
+            payBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            payBtn.disabled = true;
+            
+            setTimeout(() => {
+                alert('Payment Successful! 🎉\nOrder confirmed for Fitness Tracker Pro.\nCheck your email for receipt.');
+                payBtn.innerHTML = originalText;
+                payBtn.disabled = false;
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
